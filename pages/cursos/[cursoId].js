@@ -12,12 +12,23 @@ export async function getStaticPaths() {
                 }
             }
         ],
-        fallback: false
+        fallback: 'blocking'
     };
+}
+
+// retorna uma Promise resolvida após 2 segundos
+function delay() {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, 2000);
+    });
 }
 
 export async function getStaticProps(context) {
     const id = context.params.cursoId;
+
+    await delay();
 
     const response = await fetch('http://localhost:3000/api/cursos/' + id);
     const data = await response.json();
