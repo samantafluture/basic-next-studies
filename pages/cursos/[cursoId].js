@@ -1,22 +1,24 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 
-export default function Cursos() {
-    const router = useRouter(),
-        id = router.query.cursoId,
-        [curso, setCurso] = useState({});
+export async function getServerSideProps(context) {
+    const id = context.query.cursoId;
 
-    useEffect(() => {
-        if (id) {
-            fetch('http://localhost:3000/api/cursos/' + id)
-                .then((response) => response.json())
-                .then((data) => setCurso(data));
+    const response = await fetch('http://localhost:3000/api/cursos/' + id);
+    const data = await response.json();
+    return {
+        props: {
+            curso: data
         }
-    }, [id]);
+    };
+}
 
-    if (curso.id) {
-        return <h1>Curso: {curso.nome} - {curso.id}</h1>;
-    }
+export default function Cursos(props) {
+    const curso = props.curso;
 
-    return <h1>Curso {id} não encontrado!</h1>;
+    return (
+        <h1>
+            Curso: {curso.nome} - {curso.id}
+        </h1>
+    );
 }
